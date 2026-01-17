@@ -1,0 +1,93 @@
+﻿## =========================
+## .NET / Visual Studio
+## =========================
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS Code
+.idea/
+.vscode/
+*.code-workspace
+
+## =========================
+## Logs & temp files
+## =========================
+*.log
+*.tmp
+*.temp
+*.swp
+
+## =========================
+## OS generated files
+## =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+## =========================
+## NuGet
+## =========================
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+## =========================
+## ASP.NET Core secrets
+## =========================
+
+# App settings (chứa connection string, secret key)
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+appsettings.json
+
+# User secrets
+secrets.json
+
+# Environment files
+.env
+.env.*
+
+## =========================
+## Certificates & keys
+## =========================
+*.pfx
+*.cer
+*.key
+*.pem
+
+## =========================
+## Database files
+## =========================
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+## =========================
+## Publish output
+## =========================
+publish/
+wwwroot/lib/
+
+## =========================
+## Test results
+## =========================
+TestResults/
+coverage/
+# Launch settings
+Properties/launchSettings.json
