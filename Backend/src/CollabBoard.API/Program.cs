@@ -63,6 +63,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddOpenApi();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -75,6 +76,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication(); 
 app.UseAuthorization(); 
+app.MapHub<CollabBoard.API.Hubs.BoardHub>("/boardHub");
 
 app.MapControllers(); 
 
