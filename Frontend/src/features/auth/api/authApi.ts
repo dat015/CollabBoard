@@ -1,15 +1,14 @@
-import axiosClient from '@/lib/axios';
-import type { LoginRequest, LoginResponse } from '../types';
+import type { LoginRequest, LoginResponse, User } from '../types';
+import { api } from '@/lib/api';
 
 export const authApi = {
-  login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await axiosClient.post('/auth/login', data);
-    return response.data;
+  login: (data: LoginRequest): Promise<LoginResponse> => {
+    return api.post<LoginResponse>("/auth/login", data);
   },
   
   // Sau này thêm register ở đây
   register: async (data: any) => {
-    const response = await axiosClient.post('/auth/register', data);
-    return response.data;
+    const response = await api.post('/auth/register', data);
+    return response;
   }
 };

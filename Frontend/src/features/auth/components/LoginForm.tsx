@@ -22,8 +22,8 @@ import { Input } from "@/components/ui/input"
 
 // 1. Định nghĩa Schema (Luật validate) bằng Zod
 const formSchema = z.object({
-  email: z.string().email({ message: "Email không hợp lệ." }),
-  password: z.string().min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự." }),
+  Email: z.string().email({ message: "Email không hợp lệ." }),
+  Password: z.string().min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự." }),
 })
 
 export function LoginForm() {
@@ -35,8 +35,8 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      Email: "",
+      Password: "",
     },
   })
 
@@ -45,13 +45,14 @@ export function LoginForm() {
     setGlobalError("")
     try {
       const response = await authApi.login(values)
+      console.log("Đăng nhập thành công:", response)
       login(
-        { id: response.data.id, email: response.data.email, displayName: response.data.full_name },
+        { id: response.data.id, email: response.data.email, displayName: response.data.displayName },
         response.data.token
       )
       navigate("/")
     } catch (error: any) {
-      setGlobalError(error.response?.data?.message || "Đăng nhập thất bại.")
+      setGlobalError(error?.message || "Đăng nhập thất bại.")
     }
   }
 
@@ -71,7 +72,7 @@ export function LoginForm() {
         {/* Field Email */}
         <FormField
           control={form.control}
-          name="email"
+          name="Email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
@@ -86,7 +87,7 @@ export function LoginForm() {
         {/* Field Password */}
         <FormField
           control={form.control}
-          name="password"
+          name="Password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Mật khẩu</FormLabel>

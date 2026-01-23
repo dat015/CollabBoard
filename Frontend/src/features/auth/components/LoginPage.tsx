@@ -11,8 +11,7 @@ import {
 
 const LoginPage = () => {
   return (
-    <div className="flex justify-center items-center w-full">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-auto shadow-lg h-[500px] sm:h-auto md:h-1/2 lg:h-2/3">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Đăng nhập</CardTitle>
           <CardDescription className="text-center">
@@ -44,7 +43,6 @@ const LoginPage = () => {
           </div>
         </CardFooter>
       </Card>
-    </div>
   )
 }
 

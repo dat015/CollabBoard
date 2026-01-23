@@ -62,6 +62,26 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//CORS
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins:Urls").Get<string[]>();
+if (allowedOrigins == null || allowedOrigins.Length == 0)
+{
+    allowedOrigins = new[] { "http://localhost:5173" };
+}
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy  =>
+                      {
+                          policy.WithOrigins(allowedOrigins)
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials();
+                      });
+});
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -71,11 +91,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
-app.UseAuthorization(); 
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapControllers(); 
+// Map Hub
+app.MapHub<CollabBoard.API.Hubs.BoardHub>("/boardHub");
+
+app.MapControllers();
 
 app.Run();
