@@ -26,7 +26,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-
+builder.Services.AddSignalR();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddAuthentication(options =>
 {
