@@ -4,9 +4,8 @@ import { useAuthStore } from "@/stores/useAuthStore";
 // import Dashboard from '@/features/board/components/Dashboard';
 import type { JSX } from "react";
 import AuthLayout from "@/layout/AuthLayout";
-import DashboardLayout from "@/layout/DashboardLayout";
 import LoginPage from "@/features/auth/components/LoginPage";
-import BoardPage from "@/features/board/components/BoardPage";
+import Whiteboard from "@/features/board/components/Whiteboard";
 
 // Component bảo vệ: Nếu chưa login thì đá về Login
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -55,7 +54,7 @@ export const AppRouter = () => {
           path="/*"
           element={
             <ProtectedRoute>
-              <BoardPage />
+              <Whiteboard />
             </ProtectedRoute>
           }
         >
