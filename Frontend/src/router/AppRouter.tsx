@@ -1,11 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/useAuthStore";
 // import LoginPage from '@/features/auth/components/LoginPage'; // Giả sử bạn đã tạo
 // import Dashboard from '@/features/board/components/Dashboard';
-import type { JSX } from 'react';
-import AuthLayout from '@/layout/AuthLayout';
-import DashboardLayout from '@/layout/DashboardLayout';
-import LoginPage from '@/features/auth/components/LoginPage';
+import type { JSX } from "react";
+import AuthLayout from "@/layout/AuthLayout";
+import DashboardLayout from "@/layout/DashboardLayout";
+import LoginPage from "@/features/auth/components/LoginPage";
+import BoardPage from "@/features/board/components/BoardPage";
 
 // Component bảo vệ: Nếu chưa login thì đá về Login
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -23,24 +24,43 @@ export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Nhóm Authentication */}
-        <Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<div>Register Page</div>} />
+        {/* 1. AuthLayout đóng vai trò Wrapper UI chung */}
+        <Route element={<AuthLayout />}>
+          {/* 2. PublicRoute bảo vệ logic cho từng trang */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <div>Register Page Component</div>
+              </PublicRoute>
+            }
+          />
         </Route>
 
-        {/* Nhóm Dashboard (Cần đăng nhập) */}
-        {/* <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-          <Route path="/" element={<DashboardPage />} />
-        </Route> */}
-
-        {/* Nhóm Vẽ (Không dùng layout Dashboard, nhưng vẫn cần bảo vệ) */}
-        {/* <Route path="/board/:roomId" element={
-            <ProtectedRoute><BoardPage /></ProtectedRoute>
-        } /> */}
-        
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+
+      {/* Dashboard Routes */}
+      <Routes>
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <BoardPage />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<div>Dashboard Component</div>} />\{" "}
+        </Route>
       </Routes>
     </BrowserRouter>
   );

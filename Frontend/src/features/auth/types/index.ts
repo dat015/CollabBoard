@@ -1,14 +1,14 @@
 import type { BaseResponse } from "@/types/BaseResponse";
 
 export interface LoginRequest {
-    email: string;
-    password: string;
+    Email: string;
+    Password: string;
 }
 
 export interface User {
     id: string;
     email: string;
-    full_name: string;
+    displayName: string;
     role?: string;
     token: string;
 }

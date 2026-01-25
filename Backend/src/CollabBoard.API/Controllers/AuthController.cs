@@ -22,7 +22,12 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _identityService.RegisterAsync(request);
-            return Ok(result);
+            return Ok(new
+            {
+                data = result,
+                message = "User registered successfully",
+                success =true
+            });
         }
         catch (Exception ex)
         {
@@ -36,7 +41,12 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _identityService.LoginAsync(request);
-            return Ok(result);
+            return Ok(new
+            {
+                data = result,
+                message = "User login successfully",
+                success = true
+            });
         }
         catch (Exception ex)
         {
