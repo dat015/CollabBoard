@@ -3,7 +3,7 @@ import { Image as KonvaImage } from 'react-konva';
 
 interface UrlImageProps {
   shape: any;
-  commonProps: any; // Props chung (drag, click...)
+  commonProps: any; 
 }
 
 const UrlImage = ({ shape, commonProps }: UrlImageProps) => {
