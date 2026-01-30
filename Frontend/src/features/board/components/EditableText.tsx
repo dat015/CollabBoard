@@ -6,28 +6,23 @@ const EditableText = ({ shape, commonProps, onChange }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [textValue, setTextValue] = useState(shape.text);
 
-  // Cập nhật lại state nội bộ nếu props thay đổi từ bên ngoài (ví dụ Undo/Redo)
   useEffect(() => {
     setTextValue(shape.text);
   }, [shape.text]);
 
-  // Xử lý khi gõ phím
   const handleKeyDown = (e: any) => {
-    // Nếu bấm Enter (mà không giữ Shift) thì lưu và thoát
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Chặn xuống dòng
+      e.preventDefault(); 
       handleFinish();
     }
-    // Nếu bấm ESC thì hủy bỏ thay đổi
     if (e.key === 'Escape') {
       setIsEditing(false);
-      setTextValue(shape.text); // Reset về cũ
+      setTextValue(shape.text); 
     }
   };
 
   const handleFinish = () => {
     setIsEditing(false);
-    // Gọi hàm onChange của cha để lưu vào mảng shapes gốc
     onChange({
       ...shape,
       text: textValue

@@ -1,4 +1,12 @@
-export type ToolType = 'select' | 'rect' | 'circle' | 'text' | 'image' | 'note' | 'arrow';
+export type ToolType =
+  | "select"
+  | "rect"
+  | "circle"
+  | "text"
+  | "image"
+  | "note"
+  | "arrow"
+  | "hand";
 
 export interface BaseShape {
   id: string;
@@ -11,45 +19,49 @@ export interface BaseShape {
 }
 
 export interface RectangleShape extends BaseShape {
-  type: 'rect';
+  type: "rect";
   width: number;
   height: number;
   fill: string;
 }
 
 export interface CircleShape extends BaseShape {
-  type: 'circle';
+  type: "circle";
   radius: number;
   fill: string;
+  width?: number;
+  height?: number;
 }
 
 export interface ImageShape extends BaseShape {
-  type: 'image';
+  type: "image";
   src: string; // URL của ảnh (base64 hoặc link)
   width: number;
   height: number;
 }
 
 export interface TextShape extends BaseShape {
-  type: 'text';
+  type: "text";
   text: string;
   fontSize: number;
   fill: string;
   width?: number; // Để wrap text
-height?: number;
+  height?: number;
 }
 
 export interface ArrowShape extends BaseShape {
-  type: 'arrow';
+  type: "arrow";
   points: number[]; // [x1, y1, x2, y2, ...]
   stroke: string;
   strokeWidth: number;
-  startId?: string | null; 
+  startId?: string | null;
   endId?: string | null;
+  width?: number;
+  height?: number;
 }
 
 export interface NoteShape extends BaseShape {
-  type: 'note';
+  type: "note";
   text: string;
   width: number;
   height: number;
@@ -57,4 +69,10 @@ export interface NoteShape extends BaseShape {
 }
 
 // Cập nhật Union Type
-export type CanvasShape = RectangleShape | CircleShape | ImageShape | TextShape | NoteShape | ArrowShape;
+export type CanvasShape =
+  | RectangleShape
+  | CircleShape
+  | ImageShape
+  | TextShape
+  | NoteShape
+  | ArrowShape;
