@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using CollabBoard.Application.DTOs.Hub;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CollabBoard.API.Hubs
 {
@@ -8,11 +9,19 @@ namespace CollabBoard.API.Hubs
     {
         public async Task JoinBoard(string boardId)
         {
-            // add user to a group (board)
             await Groups.AddToGroupAsync(Context.ConnectionId, boardId);
 
-            // notify others in the group that a new user has joined
-            await Clients.OthersInGroup(boardId).UserJoined(Context.UserIdentifier!);
+            // 3. TẠO DTO ĐẦY ĐỦ THÔNG TIN
+            var userInfo = new UserCursorDto
+            {
+                Id = Context.ConnectionId,
+                // Lấy tên từ JWT (ClaimTypes.Name)
+                Name = Context.User?.Identity?.Name ?? "Unknown User",
+                Color = GetRandomColor()
+            };
+
+            // 4. GỬI DTO XUỐNG FRONTEND
+            await Clients.OthersInGroup(boardId).UserJoined(userInfo);
         }
         public async Task LeaveBoard(string boardId)
         {
@@ -26,6 +35,15 @@ namespace CollabBoard.API.Hubs
         public async Task SendCursor(string boardId, float x, float y)
         {
             await Clients.OthersInGroup(boardId).ReceiveCursor(Context.UserIdentifier!, x, y);
+        }
+        public async Task MoveCursor(string boardId, double x, double y)
+        {
+            await Clients.OthersInGroup(boardId).CursorMoved(Context.ConnectionId, x, y);
+        }
+        private string GetRandomColor()
+        {
+            var colors = new[] { "#FF5733", "#33FF57", "#3357FF", "#F033FF", "#FF33A8", "#33FFF5" };
+            return colors[new Random().Next(colors.Length)];
         }
     }
 }
