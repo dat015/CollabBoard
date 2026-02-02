@@ -3,13 +3,14 @@ using CollabBoard.Application.DTOs.Auth.Request;
 using CollabBoard.Application.DTOs.Auth.Response;
 using CollabBoard.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CollabBoard.Infrastructure.Services
 {
@@ -17,11 +18,13 @@ namespace CollabBoard.Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-        public IdentityService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public IdentityService(UserManager<ApplicationUser> userManager, IConfiguration configuration, IJwtTokenGenerator jwtTokenGenerator)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
         public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
@@ -41,7 +44,7 @@ namespace CollabBoard.Infrastructure.Services
                 throw new Exception($"Đăng ký thất bại: {errors}");
             }
 
-            return await GenerateAuthResponseAsync(user);
+            return await GenerateAndSaveTokensAsync(user);
         }
 
         public async Task<AuthResponse> LoginAsync(LoginRequest request)
@@ -54,33 +57,41 @@ namespace CollabBoard.Infrastructure.Services
             if (!isValidPassword)
                 throw new Exception("Tài khoản hoặc mật khẩu không đúng.");
 
-            return await GenerateAuthResponseAsync(user);
+            return await GenerateAndSaveTokensAsync(user);
         }
 
-        // Hàm phụ: Sinh JWT Token
-        private async Task<AuthResponse> GenerateAuthResponseAsync(ApplicationUser user)
+        public async Task<AuthResponse> RefreshAccessToken(string refetchToken)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Secret"]!);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refetchToken);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            }),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!)),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _configuration["JwtSettings:Issuer"],
-                Audience = _configuration["JwtSettings:Audience"]
-            };
+                throw new Exception("Refresh token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+            }
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+            return await GenerateAndSaveTokensAsync(user);
+        }
 
-            return new AuthResponse(user.Id, user.Email!, user.DisplayName ?? "", tokenString);
+        private async Task<AuthResponse> GenerateAndSaveTokensAsync(ApplicationUser user)
+        {
+            var accessToken = _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+
+            int refreshTokenValidityInDays = int.Parse(_configuration["JwtSettings:RefreshTokenExpiryDays"] ?? "7");
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
+
+            await _userManager.UpdateAsync(user);
+
+            return new AuthResponse
+            (
+                user.Id,
+                user.Email ?? "",
+                user.DisplayName ?? "",
+                accessToken,
+                refreshToken
+            );
         }
     }
 }

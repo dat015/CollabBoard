@@ -28,6 +28,7 @@ builder.Services.AddControllers()
     });
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

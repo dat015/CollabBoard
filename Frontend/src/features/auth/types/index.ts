@@ -11,6 +11,7 @@ export interface User {
     displayName: string;
     role?: string;
     token: string;
+    refreshToken: string;
 }
 
 export type LoginResponse = BaseResponse<User>;
