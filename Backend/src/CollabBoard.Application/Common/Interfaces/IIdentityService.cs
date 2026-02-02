@@ -10,5 +10,6 @@ namespace CollabBoard.Application.Common.Interfaces
     {
         Task<AuthResponse> LoginAsync(LoginRequest request);
         Task<AuthResponse> RegisterAsync(RegisterRequest request);
+        Task<AuthResponse> RefreshAccessToken(string RefetchToken);
     }
 }

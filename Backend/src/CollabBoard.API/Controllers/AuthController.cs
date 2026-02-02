@@ -1,6 +1,8 @@
 ﻿using CollabBoard.Application.Common.Interfaces;
 using CollabBoard.Application.DTOs.Auth;
 using CollabBoard.Application.DTOs.Auth.Request;
+using CollabBoard.Application.DTOs.Auth.Response;
+using CollabBoard.Application.DTOs.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollabBoard.API.Controllers;
@@ -22,16 +24,22 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _identityService.RegisterAsync(request);
-            return Ok(new
-            {
-                data = result,
-                message = "User registered successfully",
-                success =true
-            });
+
+            return Ok(
+                BaseResponse<AuthResponse>.Ok(
+                    result,
+                    "User registered successfully"
+                )
+            );
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(
+                BaseResponse<object>.Fail(
+                    ex.Message,
+                    "AUTH_REGISTER_FAILED"
+                )
+            );
         }
     }
 
@@ -41,16 +49,49 @@ public class AuthController : ControllerBase
         try
         {
             var result = await _identityService.LoginAsync(request);
-            return Ok(new
-            {
-                data = result,
-                message = "User login successfully",
-                success = true
-            });
+
+            return Ok(
+                BaseResponse<AuthResponse>.Ok(
+                    result,
+                    "User login successfully"
+                )
+            );
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(
+                BaseResponse<object>.Fail(
+                    ex.Message,
+                    "AUTH_LOGIN_FAILED"
+                )
+            );
+        }
+    }
+
+    [HttpPost("token")]
+    public async Task<IActionResult> RefreshAccessToken(
+        [FromBody] RefreshTokenRequest request)
+    {
+        try
+        {
+            var result = await _identityService
+                .RefreshAccessToken(request.RefreshToken);
+
+            return Ok(
+                BaseResponse<AuthResponse>.Ok(
+                    result,
+                    "Get access token successfully"
+                )
+            );
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(
+                BaseResponse<object>.Fail(
+                    ex.Message,
+                    "AUTH_REFRESH_TOKEN_FAILED"
+                )
+            );
         }
     }
 }

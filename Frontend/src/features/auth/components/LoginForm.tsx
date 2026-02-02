@@ -48,7 +48,8 @@ export function LoginForm() {
       console.log("Đăng nhập thành công:", response)
       login(
         { id: response.data.id, email: response.data.email, displayName: response.data.displayName },
-        response.data.token
+        response.data.token,
+        response.data.refreshToken
       )
       navigate("/")
     } catch (error: any) {
