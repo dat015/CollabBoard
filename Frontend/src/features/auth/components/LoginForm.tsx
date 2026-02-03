@@ -46,6 +46,8 @@ export function LoginForm() {
     try {
       const response = await authApi.login(values)
       console.log("Đăng nhập thành công:", response)
+      console.log("Token:", response.data.token)
+      console.log("Refresh Token:", response.data.refreshToken)
       login(
         { id: response.data.id, email: response.data.email, displayName: response.data.displayName },
         response.data.token,

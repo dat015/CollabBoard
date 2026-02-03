@@ -31,7 +31,8 @@ namespace CollabBoard.Infrastructure.Services
                 Subject = new ClaimsIdentity(new[]
                 {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email!)
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.Name, user.DisplayName!)
             }),
                 Expires = DateTime.UtcNow.AddMinutes(
                     double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!)
