@@ -10,27 +10,23 @@ namespace CollabBoard.API.Hubs
         public async Task JoinBoard(string boardId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, boardId);
-
-            // 3. TẠO DTO ĐẦY ĐỦ THÔNG TIN
             var userInfo = new UserCursorDto
             {
                 Id = Context.ConnectionId,
-                // Lấy tên từ JWT (ClaimTypes.Name)
                 Name = Context.User?.Identity?.Name ?? "Unknown User",
                 Color = GetRandomColor()
             };
 
-            // 4. GỬI DTO XUỐNG FRONTEND
             await Clients.OthersInGroup(boardId).UserJoined(userInfo);
         }
         public async Task LeaveBoard(string boardId)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, boardId);
         }
-        public async Task SendShape(string boardId, string shapeData)
+        public async Task SendShape(string boardId, object shape)
         {
             // send shape data to all other clients in the same board
-            await Clients.OthersInGroup(boardId).ReceiveShape(shapeData);
+            await Clients.OthersInGroup(boardId).ReceiveShape(shape);
         }
         public async Task SendCursor(string boardId, float x, float y)
         {

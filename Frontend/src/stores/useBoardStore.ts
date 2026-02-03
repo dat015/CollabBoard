@@ -60,7 +60,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(`${BaseUrl}/boardHub`,{
         accessTokenFactory: async () => {
-          let accessToken = localStorage.getItem('accessToken') || '';
+          let accessToken = localStorage.getItem('token') || '';
           const refreshToken = localStorage.getItem('refreshToken');
 
           if (!accessToken) return '';
@@ -82,7 +82,6 @@ export const useBoardStore = create<BoardState>((set, get) => ({
               return newAccess;
             } catch (error) {
               console.error("SignalR Refresh Failed:", error);
-              // Refresh lỗi -> Logout
               localStorage.clear();
               window.location.href = "/login";
               return '';
